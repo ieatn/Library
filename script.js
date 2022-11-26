@@ -1,3 +1,8 @@
+// need to add local storage
+// firebase, login btn
+// authentication
+
+
 // classes
 class Book {
     constructor(title, pages, author, isRead) {
@@ -11,12 +16,15 @@ class Library {
     constructor() {
         this.books = []
     }
+    // add book to array
     addBook(book) {
         this.books.push(book)
     }
+    // test for book list
     displayBooks() {
         console.log(this.books)
     }
+    // return new array of books after filtering out the one we want to remove
     removeBook(title) {
         this.books = this.books.filter((book) => book.title !== title)
     }
@@ -31,6 +39,8 @@ let library = new Library()
 addBookBtn.onclick = () => getBook()
 
 // functions
+
+// get info from the form user after submitting
 const getBook = (e) => {
     const title = document.getElementById('title').value
     const pages = document.getElementById('pages').value
@@ -39,13 +49,17 @@ const getBook = (e) => {
     const book = new Book(title, pages, author, isRead)
     library.addBook(book)
     createBookCard(book)
+    saveLocal()
+
 }
-// onclick function on removeBtn allows js to be used in html, call remove() with this keyword
+
+// create the card containing book info
 const createBookCard = (book) => {
     const bookCard = document.createElement('div')
 
+    // adding onclick function to removeBtn sends itself to functions, this is only way to work from innerhtml
     bookCard.innerHTML = `
-    <div class="col-4">
+    <div class="col-4 p-3">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">${book.title}</h3>
@@ -58,6 +72,9 @@ const createBookCard = (book) => {
         </div>
     </div>
     `
+    // wow this actually worked? add read class to readBtn, and onclick to this function
+    // ternary operator turns on/off read class, if class is read, change text, vice versa
+    // add/remove bootstrap colors to btn
     toggleRead = (e) => {
         e.classList.toggle('read')
         e.textContent = e.classList.contains('read') ? 'Read' : 'Not Read'
@@ -69,6 +86,7 @@ const createBookCard = (book) => {
             e.classList.remove('btn-success')
         }
     }
+    // grid is the bootstrap row. need to make this horizontal. 
     grid.appendChild(bookCard)
 }
 
@@ -79,3 +97,26 @@ removeBook = (e) => {
     library.removeBook(title)
     e.parentNode.parentNode.parentNode.remove()    
 } 
+
+// local storage
+
+// save the library as JSON, call after getting book
+const saveLocal = () => {
+    localStorage.setItem('library', JSON.stringify(library.books))
+}
+
+// get all books from local storage
+// if there are saved books, pass all books to jsontobook() to convert all JSON books to book objects 
+const restoreLocal = () => {
+    const savedBooks = JSON.parse(localStorage.getItem('library'))
+    if (savedBooks) {
+        library.books = savedBooks.map((book) => JSONToBook(book))
+    } else {
+        library.books = []
+    }
+}
+const JSONToBook = (book) => {
+    return new Book(book.title, book.author, book.pages, book.isRead)
+}
+
+restoreLocal() 
