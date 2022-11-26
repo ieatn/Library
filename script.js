@@ -1,7 +1,3 @@
-// firebase, login btn
-// authentication
-
-
 // classes
 class Book {
     constructor(title, pages, author, isRead) {
@@ -28,9 +24,11 @@ class Library {
         this.books = this.books.filter((book) => book.title !== title)
     }
 }
+
 // initialize UI 
 const addBookBtn = document.getElementById('addBookBtn')
 const removeBtn = document.getElementById('removeBtn')
+const loginBtn = document.getElementById('loginBtn')
 const grid = document.getElementById('grid')
 let library = new Library()
 
@@ -107,6 +105,16 @@ const clearFields = () => {
     document.getElementById('author').value = ''
 }
 
+const displayBooks = () => {
+    clear()
+    for (let book of library.books) {
+        createBookCard(book)
+    }
+}
+const clear = () => {
+    grid.innerHTML = ''
+}
+
 // local storage
 
 // save the library as JSON, call after getting book
@@ -129,15 +137,5 @@ const JSONToBook = (book) => {
 }
 
 restoreLocal() 
-
-const displayBooks = () => {
-    clear()
-    for (let book of library.books) {
-        createBookCard(book)
-    }
-}
-const clear = () => {
-    grid.innerHTML = ''
-}
 
 window.onload = () => {displayBooks()}

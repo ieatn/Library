@@ -13,7 +13,9 @@
   <nav class="navbar p-4">
     <div class="container">
       <div class="nav-brand"><h2 class="fw-bold">Library</h2></div>
-      <div class="nav-links"><button class="btn btn-secondary">Log in</button></div>
+      <div class="nav-links">
+        <button class="btn btn-secondary" id="loginBtn">Log in</button>
+      </div>
     </div>
   </nav>
 
@@ -66,8 +68,68 @@
       </div>
     </div>
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+  <!-- default firebase cdn -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-analytics.js";
+    // Add Firebase products that you want to use
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js'
+    import { getFirestore } from 'https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js'
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+    apiKey: "AIzaSyAVmPp4acw0P_vfH2ttdZFZjXb2AJjZ2ZM",
+    authDomain: "library-361cb.firebaseapp.com",
+    projectId: "library-361cb",
+    storageBucket: "library-361cb.appspot.com",
+    messagingSenderId: "691697973036",
+    appId: "1:691697973036:web:fd14df0675e4ed87509e89",
+    measurementId: "G-MNCLNHDPJ2"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore()
+    const auth = getAuth(app)
+    const analytics = getAnalytics(app);
+
+    // pressing login btn will activate email popup
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const provider = new GoogleAuthProvider()
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          // The signed-in user info.
+          const user = result.user;
+        }) .catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            // ...
+        });
+
+    })
+
+
+
+
+
+
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <script src="script.js"></script>
+
 </body>
 </html>
