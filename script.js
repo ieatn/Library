@@ -1,4 +1,3 @@
-// need to add local storage
 // firebase, login btn
 // authentication
 
@@ -47,10 +46,10 @@ const getBook = (e) => {
     const author = document.getElementById('author').value
     const isRead = document.getElementById('isRead').checked
     const book = new Book(title, pages, author, isRead)
+    clearFields()
     library.addBook(book)
     createBookCard(book)
     saveLocal()
-
 }
 
 // create the card containing book info
@@ -85,6 +84,7 @@ const createBookCard = (book) => {
             e.classList.add('btn-warning')
             e.classList.remove('btn-success')
         }
+        book.isRead = !book.isRead
     }
     // grid is the bootstrap row. need to make this horizontal. 
     grid.appendChild(bookCard)
@@ -96,7 +96,16 @@ removeBook = (e) => {
     const title = e.parentNode.firstElementChild.textContent
     library.removeBook(title)
     e.parentNode.parentNode.parentNode.remove()    
+    saveLocal()
+    displayBooks()
 } 
+
+// after submitting, clear the inputs
+const clearFields = () => {
+    document.getElementById('title').value = ''
+    document.getElementById('pages').value = ''
+    document.getElementById('author').value = ''
+}
 
 // local storage
 
@@ -120,3 +129,15 @@ const JSONToBook = (book) => {
 }
 
 restoreLocal() 
+
+const displayBooks = () => {
+    clear()
+    for (let book of library.books) {
+        createBookCard(book)
+    }
+}
+const clear = () => {
+    grid.innerHTML = ''
+}
+
+window.onload = () => {displayBooks()}
