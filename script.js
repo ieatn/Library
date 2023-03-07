@@ -1,4 +1,3 @@
-// classes
 class Book {
     constructor(title, pages, author, isRead) {
         this.title = title
@@ -7,102 +6,121 @@ class Book {
         this.isRead = isRead
     }
 }
+
 class Library {
     constructor() {
         this.books = []
     }
-    // add book to array
     addBook(book) {
         this.books.push(book)
     }
-    // test for book list
     displayBooks() {
         console.log(this.books)
     }
-    // return new array of books after filtering out the one we want to remove
     removeBook(title) {
         this.books = this.books.filter((book) => book.title !== title)
     }
 }
 
-// initialize UI 
+// UI
 const addBookBtn = document.getElementById('addBookBtn')
-const removeBtn = document.getElementById('removeBtn')
-const loginBtn = document.getElementById('loginBtn')
 const grid = document.getElementById('grid')
+const modalBtn = document.getElementById('modalBtn')
+const modalBg = document.querySelector('.modal-bg')
+const modalClose = document.querySelector('#modalClose')
 let library = new Library()
 
-// btn events
+// MODAL
+modalBtn.addEventListener('click', () => {
+    modalBg.classList.add('active')
+})
+modalClose.addEventListener('click', () => {
+    modalBg.classList.remove('active')
+})
+
 addBookBtn.onclick = () => getBook()
 
-// functions
-
-// get info from the form user after submitting
-const getBook = (e) => {
-    const title = document.getElementById('title').value
-    const pages = document.getElementById('pages').value
-    const author = document.getElementById('author').value
-    const isRead = document.getElementById('isRead').checked
-    const book = new Book(title, pages, author, isRead)
-    clearFields()
-    library.addBook(book)
-    createBookCard(book)
-    saveLocal()
+const getBook = () => {
+    event.preventDefault()
+    if (validateForm() === false) {
+        return
+    }
+    else {
+        const title = document.getElementById('title').value
+        const pages = document.getElementById('pages').value
+        const author = document.getElementById('author').value
+        const isRead = document.getElementById('isRead').checked
+        const book = new Book(title, pages, author, isRead)
+        clearFields()
+        library.addBook(book)
+        createBookCard(book)
+        saveLocal()
+    }
 }
 
-// create the card containing book info
+const validateForm = () => {
+    const titleInput = document.getElementById('title')
+    const pagesInput = document.getElementById('pages')
+    const authorInput = document.getElementById('author')
+    
+    if (titleInput.value.trim() === '') {
+        alert('Please enter a title.')
+        return false
+    }
+
+    if (authorInput.value.trim() === '') {
+        alert('Please enter an author name.')
+        return false
+    }
+    
+    if (isNaN(pagesInput.value) || pagesInput.value < 1) {
+        alert('Please enter a valid number of pages.')
+        return false
+    }
+
+    return true
+}
+
 const createBookCard = (book) => {
     const bookCard = document.createElement('div')
-
-    // adding onclick function to removeBtn sends itself to functions, this is only way to work from innerhtml
     bookCard.innerHTML = `
-    <div class="col-4 p-3">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">${book.title}</h3>
-                <h5 class="card-title">${book.author}</h3>
-                <h5 class="card-title">${book.pages}</h3>
-                <!-- <textarea name="" id="" cols="30" rows="3">my notes</textarea> -->
-                <button class="btn btn-success read" id="readBtn" onclick="toggleRead(this)">Read</button>
-                <button class="btn btn-danger" id="removeBtn" onclick="removeBook(this)">Remove</button> 
-            </div>
+    <div class="book">
+        <p>${book.title}</p>
+        <p>${book.author}</p>
+        <p>${book.pages}</p>
+        <div>
+            <button class="btn ${book.isRead ? 'btn-green' : 'btn-yellow'}" ${book.isRead ? 'read' : ''}" id="readBtn" onclick="toggleRead(this)">${book.isRead ? 'Read' : 'Not Read'}</button>
+            <button class="btn btn-red" id="removeBtn" onclick="removeBook(this)">Remove</button>
         </div>
     </div>
     `
-    // wow this actually worked? add read class to readBtn, and onclick to this function
-    // ternary operator turns on/off read class, if class is read, change text, vice versa
-    // add/remove bootstrap colors to btn
     toggleRead = (e) => {
         e.classList.toggle('read')
         e.textContent = e.classList.contains('read') ? 'Read' : 'Not Read'
         if (e.classList.contains('read')) {
-            e.classList.add('btn-success')
-            e.classList.remove('btn-warning')
+            e.classList.add('btn-green')
+            e.classList.remove('btn-yellow')
         } else {
-            e.classList.add('btn-warning')
-            e.classList.remove('btn-success')
+            e.classList.add('btn-yellow')
+            e.classList.remove('btn-green')
         }
         book.isRead = !book.isRead
     }
-    // grid is the bootstrap row. need to make this horizontal. 
     grid.appendChild(bookCard)
 }
 
-// get e, event propagation to go all the way up to card div instead of button and delete it
-// omg i had to google firstElementChild finally works
 removeBook = (e) => {
-    const title = e.parentNode.firstElementChild.textContent
-    library.removeBook(title)
-    e.parentNode.parentNode.parentNode.remove()    
+    const bookTitle = e.parentNode.parentNode.querySelector('p:first-child').textContent
+    library.removeBook(bookTitle)
+    e.parentNode.parentNode.remove()
     saveLocal()
-    displayBooks()
-} 
+}
 
-// after submitting, clear the inputs
 const clearFields = () => {
     document.getElementById('title').value = ''
     document.getElementById('pages').value = ''
     document.getElementById('author').value = ''
+    document.getElementById('isRead').checked = false
 }
 
 const displayBooks = () => {
@@ -111,19 +129,19 @@ const displayBooks = () => {
         createBookCard(book)
     }
 }
+
 const clear = () => {
     grid.innerHTML = ''
 }
 
-// local storage
-
-// save the library as JSON, call after getting book
 const saveLocal = () => {
     localStorage.setItem('library', JSON.stringify(library.books))
 }
 
-// get all books from local storage
-// if there are saved books, pass all books to jsontobook() to convert all JSON books to book objects 
+const JSONToBook = (book) => {
+    return new Book(book.title, book.author, book.pages, book.isRead)
+}
+
 const restoreLocal = () => {
     const savedBooks = JSON.parse(localStorage.getItem('library'))
     if (savedBooks) {
@@ -131,9 +149,6 @@ const restoreLocal = () => {
     } else {
         library.books = []
     }
-}
-const JSONToBook = (book) => {
-    return new Book(book.title, book.author, book.pages, book.isRead)
 }
 
 restoreLocal() 

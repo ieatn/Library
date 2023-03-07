@@ -1,31 +1,123 @@
-html {
-    /* footer support for all websites */
-    position: relative;
-    min-height: 100%;
-}   
-.navbar {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-/* FOOTER */
-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px;
-    font-size: 20px;
-}
-  
-.fa-github {
-    color: var(--primary-dark);
-    font-size: 24px;
-    transition: transform 0.3s ease-in-out;
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.fa-github:hover {
-    transform: rotate(360deg) scale(1.2);
+body {
+    font-family: 'Poppins', sans-serif;
+    padding: 1rem;
+}
+
+.container {
+    max-width: 1100px;
+    width: 100%;
+    margin: auto;
+}
+
+.btn {
+    width: 150px;
+    height: 50px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+    color: white;
+}
+
+.btn-primary {
+    background-color: blue;
+}
+
+.btn-yellow {
+    background-color: rgb(231, 231, 10);
+}
+
+.btn-green {
+    background-color: green;
+}
+
+.btn-red {
+    background-color: red;
+}
+
+/* NAV */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* MODAL */
+.modal-btn {
+    text-align: center;
+    margin-top: 5rem;
+}
+
+.modal-bg {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+.modal-bg.active {
+    display: flex;
+}
+
+.modal {
+    width: 400px;
+    max-width: 100%;    
+    background-color: white;
+    border-radius: 10px;
+    padding: 3rem;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.modal form > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.book {
+    width: 500px;
+    max-width: 100%;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    text-align: center;
+    margin: auto;
+    padding: 1rem;
+}
+
+.book-grid {
+    display: grid;
+    place-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 10rem;
+    margin-top: 5rem;
 }
